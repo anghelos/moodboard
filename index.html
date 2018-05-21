@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Moodboard</title>
+    <link rel="stylesheet" href="style.css">
+    <meta property="og:image" content="moodboard_screenshot2.jpg" />
+    <meta property="og:description" content="A simple (and free!) browser-based moodboard app" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600" rel="stylesheet">
+</head>
+
+<body ondrop="drop(event)" ondragover="allowDrop(event)">
+    <header>
+        <nav id="menu_button">
+        <div class="menu_dot"></div>
+        <div class="menu_dot"></div>
+        <div class="menu_dot bottom"></div>
+        </nav>
+        <nav id="menu">
+            <ul>
+                <li class="menu_item" onmouseover="document.getElementById('hover_text').innerHTML = 'Clear';" onmouseout="document.getElementById('hover_text').innerHTML = '';" id="clear">Clear</li>
+                <li class="menu_item"><a href="" onmouseover="document.getElementById('hover_text').innerHTML = 'Export';" onmouseout="document.getElementById('hover_text').innerHTML = '';" id="export">Export</a></li>
+                <li class="menu_item" onmouseover="document.getElementById('hover_text').innerHTML = 'Import';" onmouseout="document.getElementById('hover_text').innerHTML = '';" id="import">Import</li>
+            </ul>
+            <span id="hover_text"></span>
+        </nav>
+        <h2 id="title">Moodboard</h2>
+<!--
+        <div id="help">?
+            <div id="helpbox">
+                <p>Drag image to move, <br>drag from sides to resize.</p>
+                <p>Bring forward or backward with <i class="fa fa-chevron-up" aria-hidden="true"></i> and <i class="fa fa-chevron-down" aria-hidden="true"></i>.</p>
+                <p>Desaturate image with <i class="fa fa-adjust" aria-hidden="true"></i>.</p>
+                <p>The moodboard is saved in your browser!</p>
+            </div>
+        </div>
+-->
+        <div id="add" class="plus_button">+</div>
+        <form id="form" name="imageForm" class="hidden" action="#" onsubmit="addButton(event)">
+            <input id="img_url" type="text" placeholder="Insert image url, or color hex (#000000)">
+            <div id="submit" class="plus_button" onclick="addButton(event)">+</div>
+            <div class="picker_container"><i class="fa fa-eyedropper" aria-hidden="true"></i>
+                <input class="color_picker" type="color" value="#dbdbdb" onchange="addColor(this.value); this.value='#ffda76'; toggleForm(); this.blur();"></div>
+        </form>
+    </header>
+    <div id="start_info">
+        <div class="info">Drag images here from your browser or computer, <br>or use the + button on the top right.</div>
+    </div>
+    <footer>Made with love by Anghelos Coulon - <span id="version">v 0.8.3.2</span></footer>
+    <!--  Javascript  -->
+    <script src="js/interact.min.js"></script>
+    <script src="https://use.fontawesome.com/44c8bfee71.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
