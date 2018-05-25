@@ -526,3 +526,35 @@ footer {
     transition: all .6s cubic-bezier(.46, -0.17, .85, .09);
     opacity: 0;
 }
+
+.overlay{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+.window{
+    margin: auto;
+    background-color: #dbdbdb;
+    width: 30vw;
+    height: 40vh;
+    border-radius: 3px;
+    position: relative;
+}
+.window > input{
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+.window > .controls{
+    opacity: 1;
+}
+.window > label{
+    display: block;
+    margin: auto;
+    padding: 1em;
+}

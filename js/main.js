@@ -356,8 +356,10 @@ function getExtension(fname) {
 }
 
 //Drop local images
-function dropLocal(evt, x, y) {
-    var files = evt.dataTransfer.files; // FileList object
+function dropLocal(evt, x, y, files = null) {
+   if(!files){
+       files = evt.dataTransfer.files; // FileList object
+   }
     // Loop through the FileList and render image files as thumbnails.
     for (var i = 0, f; f = files[i]; i++) {
 
@@ -426,7 +428,7 @@ function drop(ev) {
         if (debugOn) {
             alert(ev.dataTransfer.types[i]);
         }
-        
+
         if (ev.dataTransfer.types[i] == 'text/html') {
             var imageUrl = ev.dataTransfer.getData('text/html');
 
@@ -493,8 +495,6 @@ function clear(internal = false) {
         start = true;
         document.getElementById('start_info').classList.remove('hidden');
     }
-
-    document.getElementById('menu').classList.remove('extended', 'overflow');
 }
 
 //Creates a downloadable moodboard, and links it to the "export" anchor link
@@ -525,7 +525,45 @@ document.getElementById('export').addEventListener('click', function () {
     toggleMenu();
 });
 document.getElementById('import').addEventListener('click', function () {
-    alert('You can only import by dragging your .mood file in the window for now.\nSorry for the inconvenience!');
+    var overlay = document.createElement("div");
+    overlay.classList.add('overlay');
+    var importWindow = document.createElement("div");
+    importWindow.classList.add('window');
+    
+    var importButton = document.createElement("input");
+    importButton.setAttribute("type", "file");
+    importButton.setAttribute("name", "file");
+    importButton.setAttribute("id", "file");
+    importButton.onchange = function(e){
+        dropLocal(e, 50, 50, importButton.files);
+        document.body.removeChild(overlay);
+    }
+    var label = document.createElement('label');
+    label.setAttribute('for', 'file');
+    label.innerHTML = "Choose a .mood file"
+    
+    var close = document.createElement('span');
+    close.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
+    close.classList.add('close', 'controls');
+    close.addEventListener('click', function () {
+        document.body.removeChild(overlay);
+    });
+    
+    
+    importWindow.append(importButton);
+    importWindow.append(label);
+    importWindow.append(close);
+    overlay.append(importWindow);
+    document.body.append(overlay);
+    
+    overlay.addEventListener('click', function(e){
+        if(e.target !== this){
+            return;
+        }
+        document.body.removeChild(overlay);
+    });
+    
+    //alert('You can only import by dragging your .mood file in the window for now.\nSorry for the inconvenience!');
     toggleMenu();
 });
 document.getElementById('version').addEventListener('dblclick', function () {
