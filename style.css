@@ -540,21 +540,51 @@ footer {
 .window{
     margin: auto;
     background-color: #dbdbdb;
-    width: 30vw;
-    height: 40vh;
+    width: 30em;
+    height: 18em;
     border-radius: 3px;
     position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
 }
 .window > input{
     width: 0.1px;
     height: 0.1px;
     position: absolute;
+    text-align: center;
 }
 .window > .controls{
     opacity: 1;
 }
+.window > .close:hover:after {
+    content: 'Close';
+}
 .window > label{
-    display: block;
-    margin: auto;
+    display: inline-block;
     padding: 1em;
+    margin: auto;
+    background-color: #969696;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2em;
+    border-radius: 5px;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+    cursor: pointer;
+    -webkit-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+.window > label:hover{
+    background-color: #ffda76;
+    -webkit-box-shadow: 1px 1px 8px rgba(0,0,0,0.2);
+    box-shadow: 1px 1px 8px rgba(0,0,0,0.2);
+}
+.window > label:active{
+    background-color: #969696;
+    -webkit-box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+.window > input:focus + label{
+    outline: 1px dotted #000;
+	outline: -webkit-focus-ring-color auto 5px;
 }
