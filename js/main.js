@@ -548,8 +548,6 @@ document.getElementById('import').addEventListener('click', function () {
     close.addEventListener('click', function () {
         document.body.removeChild(overlay);
     });
-    
-    
     importWindow.append(importButton);
     importWindow.append(label);
     importWindow.append(close);

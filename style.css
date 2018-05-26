@@ -547,6 +547,15 @@ footer {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-bottom: 1.5em;
+    -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
 .window > input{
     width: 0.1px;
@@ -561,7 +570,7 @@ footer {
     content: 'Close';
 }
 .window > label{
-    display: inline-block;
+    display: block;
     padding: 1em;
     margin: auto;
     background-color: #969696;
@@ -587,4 +596,15 @@ footer {
 .window > input:focus + label{
     outline: 1px dotted #000;
 	outline: -webkit-focus-ring-color auto 5px;
+}
+.window > label:after{
+    content: 'You can also just drag a .mood file in the window at any time!';
+    position: absolute;
+    color: #969696;
+    font-weight: 400;
+    text-shadow: none;
+    left: 0;
+    margin: 3.5em;
+    text-align: center;
+    font-size: .9em;
 }
