@@ -39,10 +39,13 @@ function loadBoard() {
     loading = true;
     localdata = JSON.parse(window.localStorage.getItem('moodboard'));
     for (var i = 0; i < localdata.length; i++) {
-        if (localdata[i].url == "hex") {
-            addColor(localdata[i].color, localdata[i].x, localdata[i].y, i, localdata[i].style);
+        var element = localdata[i];
+        if (element.url == "hex") {
+            addColor(element.color, element.x, element.y, i, element.style);
+        } else if (element.url == "text") {
+            addText(0, element.x, element.y, i, element.style, element.text);
         } else {
-            addImage(localdata[i].url, localdata[i].x, localdata[i].y, i, localdata[i].style, localdata[i].gray);
+            addImage(element.url, element.x, element.y, i, element.style, element.gray);
         }
     }
     loading = false;
@@ -100,8 +103,10 @@ interact('.draggable')
         onmove: dragMoveListener,
         onend: function (event) {
             updateThis(event.target);
-        }
+        },
+        ignoreFrom: '.text, .controls'
     })
+
     .resizable({
         // resize from all edges and corners
         edges: {
@@ -136,6 +141,11 @@ interact('.draggable')
             x = (parseFloat(target.getAttribute('data-x')) || 0),
             y = (parseFloat(target.getAttribute('data-y')) || 0);
 
+        if (target.className == "draggable textBox") {
+            event.interactable.resizable({
+                preserveAspectRatio: false
+            });
+        }
         // update the element's style
         target.style.width = event.rect.width + 'px';
         target.style.height = event.rect.height + 'px';
@@ -150,6 +160,11 @@ interact('.draggable')
 
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
+    })
+    .on('resizeend', function (event) {
+        event.interactable.resizable({
+            preserveAspectRatio: true
+        });
     });
 
 function dragMoveListener(event) {
@@ -186,30 +201,7 @@ function addControls(div, bw) {
     div.append(down);
 
     close.addEventListener('click', function () {
-
-        //Animate the drop
-        div.classList.add('drop');
-        div.style.transform = 'translate3d(' + localdata[div.id].x + 'px,' + (parseInt(localdata[div.id].y) + window.innerHeight) + 'px, 0) rotate(20deg)';
-
-        //wait 1s before doing the rest
-        setTimeout(function () {
-            //Offset the ids of the other elements
-            for (var i = parseInt(div.id) + 1; i < localdata.length; i++) {
-                var newid = localdata[i].id -= 1;
-                document.getElementById(i).id = newid;
-            }
-            localdata.splice(div.id, 1);
-
-            //remove the element
-            document.body.removeChild(div);
-            updateData();
-
-            //add info text if no more images.
-            if (localdata.length == 0) {
-                start = true;
-                document.getElementById('start_info').classList.remove('hidden');
-            }
-        }, 1000);
+        deleteItem(div);
     });
     up.addEventListener('click', function () {
         div.style.zIndex++;
@@ -241,13 +233,39 @@ function addControls(div, bw) {
     }
 }
 
+function deleteItem(div) {
+    //Animate the drop
+    div.classList.add('drop');
+    div.style.transform = 'translate3d(' + localdata[div.id].x + 'px,' + (parseInt(localdata[div.id].y) + window.innerHeight) + 'px, 0) rotate(20deg)';
+
+    //wait 1s before doing the rest
+    setTimeout(function () {
+        //Offset the ids of the other elements
+        for (var i = parseInt(div.id) + 1; i < localdata.length; i++) {
+            var newid = localdata[i].id -= 1;
+            document.getElementById(i).id = newid;
+        }
+        localdata.splice(div.id, 1);
+
+        //remove the element
+        document.body.removeChild(div);
+        updateData();
+
+        //add info text if no more images.
+        if (localdata.length == 0) {
+            start = true;
+            document.getElementById('start_info').classList.remove('hidden');
+        }
+    }, 1000);
+}
+
 function addImage(src, x = 50, y = 100, id = localdata.length, style = false, gray = false) {
     var div = document.createElement('div');
     var img = document.createElement('img');
 
     img.src = src;
     img.setAttribute('alt', src);
-    div.classList.add('draggable', 'just_added');
+    div.classList.add('draggable');
     div.id = id;
     if (style) {
         div.style = style;
@@ -288,7 +306,7 @@ function addColor(hex, x = 200, y = 100, id = localdata.length, style = false) {
 
     hexText.innerHTML = hex + '<div class="picker_container"><i class="fa fa-eyedropper" aria-hidden="true"></i><input class="color_picker" onchange="changeColor(this)" type="color" value="' + hex + '"></div>';
 
-    div.classList.add('draggable', 'just_added', 'color');
+    div.classList.add('draggable', 'color');
     div.id = id;
     if (style) {
         div.style = style;
@@ -344,6 +362,71 @@ function changeColor(el) {
     updateThis(div);
 }
 
+function addText(ev = null, x = 50, y = 100, id = localdata.length, style = false, text = 0) {
+    if (ev) {
+        x = ev.clientX - 60;
+        y = ev.clientY - 60;
+        document.body.classList.remove('textMode');
+        window.removeEventListener('click', addText);
+    }
+
+    var div = document.createElement('div');
+    div.classList.add('draggable', 'textBox');
+    div.id = id;
+    if (style) {
+        div.style = style;
+    }
+
+    var innerText = document.createElement('p');
+    innerText.setAttribute('contenteditable', 'true');
+    innerText.classList.add('text');
+    innerText.setAttribute('spellcheck', 'false');
+    innerText.innerHTML = text || "Change this text";
+    innerText.addEventListener('input', function () {
+        localdata[id].text = this.innerHTML;
+        div.style.height = null;
+        updateData();
+    });
+    innerText.addEventListener('keypress', function (e) {
+        var key = e.keyCode || e.key || 0;
+        e.stopPropagation();
+        if (key == 27) {
+            this.blur();
+        }
+    });
+    innerText.addEventListener('focus', function () {
+        div.classList.add('focused');
+    });
+    innerText.addEventListener('blur', function () {
+        if (this.innerHTML == '' || this.innerHTML == '<br>') {
+            deleteItem(div);
+            return;
+        }
+        div.classList.remove('focused');
+    })
+
+    addControls(div, false);
+    div.append(innerText);
+    document.body.append(div);
+
+    div.setAttribute("data-x", x);
+    div.setAttribute("data-y", y);
+    div.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
+    div.style.zIndex = localdata.length;
+
+    if (!loading) {
+        localdata.push({
+            url: 'text',
+            x: x,
+            y: y,
+            zindex: localdata.length,
+            id: id,
+            text: "Change this text"
+        });
+        updateData();
+    }
+    checkStart();
+}
 
 //Drop external images
 function allowDrop(ev) {
@@ -357,9 +440,9 @@ function getExtension(fname) {
 
 //Drop local images
 function dropLocal(evt, x, y, files = null) {
-   if(!files){
-       files = evt.dataTransfer.files; // FileList object
-   }
+    if (!files) {
+        files = evt.dataTransfer.files; // FileList object
+    }
     // Loop through the FileList and render image files as thumbnails.
     for (var i = 0, f; f = files[i]; i++) {
 
@@ -529,19 +612,19 @@ document.getElementById('import').addEventListener('click', function () {
     overlay.classList.add('overlay');
     var importWindow = document.createElement("div");
     importWindow.classList.add('window');
-    
+
     var importButton = document.createElement("input");
     importButton.setAttribute("type", "file");
     importButton.setAttribute("name", "file");
-    importButton.setAttribute("id", "file");
-    importButton.onchange = function(e){
+    importButton.id = "file";
+    importButton.onchange = function (e) {
         dropLocal(e, 50, 50, importButton.files);
         document.body.removeChild(overlay);
     }
     var label = document.createElement('label');
     label.setAttribute('for', 'file');
     label.innerHTML = "Choose a .mood file"
-    
+
     var close = document.createElement('span');
     close.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
     close.classList.add('close', 'controls');
@@ -553,14 +636,14 @@ document.getElementById('import').addEventListener('click', function () {
     importWindow.append(close);
     overlay.append(importWindow);
     document.body.append(overlay);
-    
-    overlay.addEventListener('click', function(e){
-        if(e.target !== this){
+
+    overlay.addEventListener('click', function (e) {
+        if (e.target !== this) {
             return;
         }
         document.body.removeChild(overlay);
     });
-    
+
     //alert('You can only import by dragging your .mood file in the window for now.\nSorry for the inconvenience!');
     toggleMenu();
 });
@@ -569,4 +652,16 @@ document.getElementById('version').addEventListener('dblclick', function () {
     debugOn = !debugOn;
 
     alert('Debugging mode: ' + debugOn + '!\n(If this is a mistake, double-click the version number again to undo)');
+});
+
+window.addEventListener('keypress', function (e) {
+    var key = e.keyCode || e.key || 0;
+    if (key == 't') {
+        document.body.classList.add('textMode');
+        window.addEventListener('click', addText);
+    }
+    if (key == 27) {
+        document.body.classList.remove('textMode');
+        window.removeEventListener('click', addText);
+    }
 });

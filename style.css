@@ -23,13 +23,11 @@ html {
  * Firefox specific rule
  */
 
-/*
 @-moz-document url-prefix() {
   body {
     font-weight: lighter !important;
   }
 }
-*/
 
 
 /* STYLE */
@@ -168,6 +166,9 @@ img:after {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
 }
+.grayscale > .bw{
+    color: #ffda76;
+}
 
 .color {
     width: 150px;
@@ -221,6 +222,18 @@ img:after {
 header .picker_container {
     top: 1px;
     color: #969696;
+}
+
+.t{
+    display: inline-block;
+    margin-left: .3em;
+    position: relative;
+    color: #969696;
+    font-weight: bold;
+    top: 1px;
+    font-size: 1.1em;
+    font-family: "Times New Roman", serif;
+    cursor: pointer;
 }
 
 header {
@@ -407,7 +420,8 @@ header * {
 }
 
 .plus_button:active,
-.picker_container:active {
+.picker_container:active,
+.t:active{
     -webkit-transform: translate3d(0, 1px, 0);
     transform: translate3d(0, 1px, 0);
     -webkit-transition: none;
@@ -422,7 +436,8 @@ header * {
 }
 
 #submit:hover,
-.picker_container:hover {
+.picker_container:hover,
+.t:hover{
     color: #ffda76;
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
@@ -522,8 +537,8 @@ footer {
 }
 
 .drop {
-    -webkit-transition: all .6s cubic-bezier(.46, -0.17, .85, .09);
-    transition: all .6s cubic-bezier(.46, -0.17, .85, .09);
+    -webkit-transition: all .6s cubic-bezier(.46, -0.17, .85, .09) !important;
+    transition: all .6s cubic-bezier(.46, -0.17, .85, .09) !important;
     opacity: 0;
 }
 
@@ -593,10 +608,6 @@ footer {
     -webkit-box-shadow: 0 0 8px rgba(0,0,0,0.2);
     box-shadow: 0 0 8px rgba(0,0,0,0.2);
 }
-.window > input:focus + label{
-    outline: 1px dotted #000;
-	outline: -webkit-focus-ring-color auto 5px;
-}
 .window > label:after{
     content: 'You can also just drag a .mood file in the window at any time!';
     position: absolute;
@@ -607,4 +618,26 @@ footer {
     margin: 3.5em;
     text-align: center;
     font-size: .9em;
+}
+.textMode{
+    cursor: text;
+}
+.textBox{
+    padding: 40px 60px 40px 50px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border-radius: 5px;
+    overflow: hidden;
+    -webkit-transition: background-color .2s ease-out;
+    transition: background-color .2s ease-out;
+}
+.textBox:hover, .textBox.focused{
+    background-color: rgba(200,200,200,0.2);
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.text{
+    font-size: 3em;
+    cursor: text;
 }
