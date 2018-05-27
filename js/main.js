@@ -454,10 +454,10 @@ function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style =
 }
 
 
-//Drop external images (this looks like it should be removed)
-//function allowDrop(ev) {
-//    ev.preventDefault();
-//}
+//Drop external images
+function allowDrop(ev) {
+    ev.preventDefault();
+}
 
 //Get file extension
 function getExtension(fname) {
