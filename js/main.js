@@ -43,7 +43,7 @@ function loadBoard() {
         if (element.url == "hex") {
             addColor(element.color, element.x, element.y, i, element.style);
         } else if (element.url == "text") {
-            addText(0, element.x, element.y, i, element.style, element.text);
+            addText(0, element.x, element.y, i, element.style, element.text, element.size);
         } else {
             addImage(element.url, element.x, element.y, i, element.style, element.gray);
         }
@@ -104,7 +104,7 @@ interact('.draggable')
         onend: function (event) {
             updateThis(event.target);
         },
-        ignoreFrom: '.text, .controls'
+        ignoreFrom: '.text, .controls, input'
     })
 
     .resizable({
@@ -141,7 +141,7 @@ interact('.draggable')
             x = (parseFloat(target.getAttribute('data-x')) || 0),
             y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-        if (target.className == "draggable textBox") {
+        if (target.className == "draggable textBox" || target.className == "draggable color") {
             event.interactable.resizable({
                 preserveAspectRatio: false
             });
@@ -149,7 +149,7 @@ interact('.draggable')
         // update the element's style
         target.style.width = event.rect.width + 'px';
         target.style.height = event.rect.height + 'px';
-        target.style.maxWidth = null;
+        target.style.maxWidth = undefined;
 
         // translate when resizing from top or left edges
         x += event.deltaRect.left;
@@ -324,19 +324,6 @@ function addColor(hex, x = 200, y = 100, id = localdata.length, style = false) {
     div.style.backgroundColor = hex;
     div.style.zIndex = localdata.length;
 
-    //Remove "preserve aspect ratio" when resizing colors.
-    //removed for now, because of bug in firefox;
-    //    div.addEventListener('mousedown', function () {
-    //        interact('.draggable').resizable({
-    //            preserveAspectRatio: false
-    //        });
-    //    });
-    //    div.addEventListener('mouseup', function () {
-    //        interact('.draggable').resizable({
-    //            preserveAspectRatio: true
-    //        });
-    //    });
-
     if (!loading) {
         localdata.push({
             url: 'hex',
@@ -362,7 +349,7 @@ function changeColor(el) {
     updateThis(div);
 }
 
-function addText(ev = null, x = 50, y = 100, id = localdata.length, style = false, text = 0) {
+function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style = false, text = 0, size = 2) {
     if (ev) {
         x = ev.clientX - 60;
         y = ev.clientY - 60;
@@ -377,36 +364,55 @@ function addText(ev = null, x = 50, y = 100, id = localdata.length, style = fals
         div.style = style;
     }
 
-    var innerText = document.createElement('p');
-    innerText.setAttribute('contenteditable', 'true');
-    innerText.classList.add('text');
-    innerText.setAttribute('spellcheck', 'false');
-    innerText.innerHTML = text || "Change this text";
-    innerText.addEventListener('input', function () {
+    var editableText = document.createElement('p');
+    editableText.setAttribute('contenteditable', 'true');
+    editableText.classList.add('text');
+    editableText.setAttribute('spellcheck', 'false');
+    editableText.setAttribute('placeholder', 'Insert text here');
+    editableText.innerHTML = text || '';
+    editableText.addEventListener('input', function () {
         localdata[id].text = this.innerHTML;
         div.style.height = null;
-        updateData();
+        updateThis(div);
     });
-    innerText.addEventListener('keypress', function (e) {
+    editableText.addEventListener('keyup', function (e) {
         var key = e.keyCode || e.key || 0;
         e.stopPropagation();
         if (key == 27) {
             this.blur();
         }
     });
-    innerText.addEventListener('focus', function () {
+    editableText.addEventListener('focus', function () {
         div.classList.add('focused');
     });
-    innerText.addEventListener('blur', function () {
-        if (this.innerHTML == '' || this.innerHTML == '<br>') {
-            deleteItem(div);
-            return;
+    editableText.addEventListener('blur', function () {
+        
+        if (editableText.innerText.trim() === '') {
+            this.innerHTML = '';
         }
         div.classList.remove('focused');
     })
+    
+    var slider = document.createElement('input');
+    slider.setAttribute("type", "range");
+    slider.setAttribute("name", "slider" + id);
+    slider.setAttribute("min", "1");
+    slider.setAttribute("max", "10");
+    slider.setAttribute("step", "0.1");
+    slider.value = size;
+    slider.id = "slider" + id;
+    editableText.style.fontSize = slider.value + 'em';
+    slider.addEventListener('input', function (e) {
+        editableText.style.fontSize = slider.value + 'em';
+        localdata[id].size = slider.value;
+        div.style.height = null;
+        updateThis(div);
+    });
+    var label = document.createElement('label');
 
     addControls(div, false);
-    div.append(innerText);
+    div.append(editableText);
+    div.append(slider);
     document.body.append(div);
 
     div.setAttribute("data-x", x);
@@ -415,23 +421,26 @@ function addText(ev = null, x = 50, y = 100, id = localdata.length, style = fals
     div.style.zIndex = localdata.length;
 
     if (!loading) {
+        editableText.focus();
         localdata.push({
             url: 'text',
             x: x,
             y: y,
             zindex: localdata.length,
             id: id,
-            text: "Change this text"
+            text: '',
+            size: size
         });
         updateData();
     }
     checkStart();
 }
 
-//Drop external images
-function allowDrop(ev) {
-    ev.preventDefault();
-}
+
+//Drop external images (this looks like it should be removed)
+//function allowDrop(ev) {
+//    ev.preventDefault();
+//}
 
 //Get file extension
 function getExtension(fname) {
@@ -439,7 +448,7 @@ function getExtension(fname) {
 }
 
 //Drop local images
-function dropLocal(evt, x, y, files = null) {
+function dropLocal(evt, x, y, files = undefined) {
     if (!files) {
         files = evt.dataTransfer.files; // FileList object
     }
@@ -654,13 +663,13 @@ document.getElementById('version').addEventListener('dblclick', function () {
     alert('Debugging mode: ' + debugOn + '!\n(If this is a mistake, double-click the version number again to undo)');
 });
 
-window.addEventListener('keypress', function (e) {
+window.addEventListener('keydown', function (e) {
     var key = e.keyCode || e.key || 0;
-    if (key == 't') {
+    if (key == 't' || key == 84) {
         document.body.classList.add('textMode');
         window.addEventListener('click', addText);
     }
-    if (key == 27) {
+    else if (key == 27) {
         document.body.classList.remove('textMode');
         window.removeEventListener('click', addText);
     }
