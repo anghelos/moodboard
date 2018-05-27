@@ -165,6 +165,23 @@ interact('.draggable')
         event.interactable.resizable({
             preserveAspectRatio: true
         });
+    })
+    .on('dragstart', function (event) {
+
+        var target = event.target;
+        var element = localdata[target.id];
+        if (event.altKey) {
+            if (element.url == "hex") {
+                addColor(element.color, element.x, element.y, undefined, element.style);
+            } else if (element.url == "text") {
+                addText(0, element.x, element.y, undefined, element.style, element.text, element.size);
+            } else {
+                addImage(element.url, element.x, element.y, undefined, element.style, element.gray);
+            }
+            target.style.zIndex++;
+            updateThis(target);
+        }
+
     });
 
 function dragMoveListener(event) {
@@ -386,13 +403,13 @@ function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style =
         div.classList.add('focused');
     });
     editableText.addEventListener('blur', function () {
-        
+
         if (editableText.innerText.trim() === '') {
             this.innerHTML = '';
         }
         div.classList.remove('focused');
     })
-    
+
     var slider = document.createElement('input');
     slider.setAttribute("type", "range");
     slider.setAttribute("name", "slider" + id);
@@ -668,8 +685,7 @@ window.addEventListener('keydown', function (e) {
     if (key == 't' || key == 84) {
         document.body.classList.add('textMode');
         window.addEventListener('click', addText);
-    }
-    else if (key == 27) {
+    } else if (key == 27) {
         document.body.classList.remove('textMode');
         window.removeEventListener('click', addText);
     }
