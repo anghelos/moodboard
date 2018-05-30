@@ -392,7 +392,7 @@ function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style =
         div.style.height = null;
         updateThis(div);
     });
-    editableText.addEventListener('keyup', function (e) {
+    editableText.addEventListener('keydown', function (e) {
         var key = e.keyCode || e.key || 0;
         e.stopPropagation();
         if (key == 27) {
