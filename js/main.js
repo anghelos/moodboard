@@ -680,11 +680,16 @@ document.getElementById('version').addEventListener('dblclick', function () {
     alert('Debugging mode: ' + debugOn + '!\n(If this is a mistake, double-click the version number again to undo)');
 });
 
+function textMode(ev) {
+    ev.stopPropagation();
+        document.body.classList.add('textMode');
+        window.addEventListener('click', addText);
+}
+
 window.addEventListener('keydown', function (e) {
     var key = e.keyCode || e.key || 0;
     if (key == 't' || key == 84) {
-        document.body.classList.add('textMode');
-        window.addEventListener('click', addText);
+        textMode();
     } else if (key == 27) {
         document.body.classList.remove('textMode');
         window.removeEventListener('click', addText);

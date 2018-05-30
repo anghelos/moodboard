@@ -13,9 +13,9 @@
 <body ondrop="drop(event)" ondragover="allowDrop(event)">
     <header>
         <nav id="menu_button">
-        <div class="menu_dot"></div>
-        <div class="menu_dot"></div>
-        <div class="menu_dot bottom"></div>
+            <div class="menu_dot"></div>
+            <div class="menu_dot"></div>
+            <div class="menu_dot bottom"></div>
         </nav>
         <nav id="menu">
             <ul>
@@ -26,7 +26,7 @@
             <span id="hover_text"></span>
         </nav>
         <h2 id="title">Moodboard</h2>
-<!--
+        <!--
         <div id="help">?
             <div id="helpbox">
                 <p>Drag image to move, <br>drag from sides to resize.</p>
@@ -43,11 +43,14 @@
             <div class="picker_container"><i class="fa fa-eyedropper" aria-hidden="true"></i>
                 <input class="color_picker" type="color" value="#dbdbdb" onchange="addColor(this.value); this.value='#ffda76'; toggleForm(); this.blur();">
             </div>
-            <div id="t" class="t" onclick="addText(); toggleForm(); this.blur();">T</div>
+            <div id="t" class="t" onclick="textMode(event); toggleForm(); this.blur();">T</div>
         </form>
     </header>
     <div id="start_info">
         <div class="info">Drag images here from your browser or computer, <br>or use the + button on the top right.</div>
+    </div>
+    <div class="addText">
+    <div class="info">Click anywhere to add text</div>
     </div>
     <footer>Made with love by Anghelos Coulon - <span id="version">v 0.9.2.2</span></footer>
     <!--  Javascript  -->

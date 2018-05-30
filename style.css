@@ -750,3 +750,25 @@ input[type=range]::-moz-range-track {
 .strong {
     font-weight: bold;
 }
+.addText{
+    position: absolute;
+    margin: auto;
+    height: 100vh;
+    width: 100vw;
+    text-align: center;
+    background-color: rgba(255,255,255, 0.5);
+    display: none;
+    z-index: 5000;
+}
+.textMode > .addText{
+    display: block;
+}
+.addText > .info{
+    margin-top: 3em;
+    background-color: rgba(200, 200, 200, 0.2);
+    padding: .5em 1em;
+    border-radius: 5px;
+    display: inline-block;
+    -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
