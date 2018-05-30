@@ -765,12 +765,13 @@ strong, .strong {
 }
 .addText > .info{
     margin-top: 3em;
-    background-color: rgba(200, 200, 200, 0.2);
-    padding: .5em 1em;
+    background-color: rgb(230, 230, 230, 0.9);
+    padding: .7em 1.2em;
     border-radius: 5px;
     display: inline-block;
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+    font-size: 1.2em
 }
 .addText > .info > span{
     font-size: 70%;
