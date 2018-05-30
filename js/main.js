@@ -689,7 +689,7 @@ function textMode(ev) {
 window.addEventListener('keydown', function (e) {
     var key = e.keyCode || e.key || 0;
     if (key == 't' || key == 84) {
-        textMode();
+        textMode(e);
     } else if (key == 27) {
         document.body.classList.remove('textMode');
         window.removeEventListener('click', addText);

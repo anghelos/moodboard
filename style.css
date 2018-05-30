@@ -747,7 +747,7 @@ input[type=range]::-moz-range-track {
     border-radius: 10%;
 }
 
-.strong {
+strong, .strong {
     font-weight: bold;
 }
 .addText{
@@ -771,4 +771,9 @@ input[type=range]::-moz-range-track {
     display: inline-block;
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+.addText > .info > span{
+    font-size: 70%;
+    display: block;
+    font-weight: 40;
 }
