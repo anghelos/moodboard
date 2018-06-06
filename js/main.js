@@ -140,7 +140,7 @@ interact('.draggable')
         var target = event.target,
             x = (parseFloat(target.getAttribute('data-x')) || 0),
             y = (parseFloat(target.getAttribute('data-y')) || 0);
-
+        //allow text boxes and colors to have a non-fixed aspect ratio
         if (target.className == "draggable textBox" || target.className == "draggable color") {
             event.interactable.resizable({
                 preserveAspectRatio: false
@@ -150,6 +150,14 @@ interact('.draggable')
         target.style.width = event.rect.width + 'px';
         target.style.height = event.rect.height + 'px';
         target.style.maxWidth = undefined;
+    
+        //Change text size if getting too small
+//        if(event.rect.width < 150){
+//            target.classList.add('tooSmall');
+//        }
+//        else if(target.classList.contains('tooSmall')){
+//            target.classList.remove('tooSmall');
+//        }
 
         // translate when resizing from top or left edges
         x += event.deltaRect.left;
@@ -167,7 +175,8 @@ interact('.draggable')
         });
     })
     .on('dragstart', function (event) {
-
+        
+        // Copy element with alt-drag
         var target = event.target;
         var element = localdata[target.id];
         if (event.altKey) {
@@ -189,7 +198,6 @@ function dragMoveListener(event) {
         // keep the dragged position in the data-x/data-y attributes
         x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
         y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
     // translate the element
     target.style.webkitTransform =
         target.style.transform =
