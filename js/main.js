@@ -152,11 +152,11 @@ interact('.draggable')
         target.style.maxWidth = undefined;
 
         //Change text size if getting too small
-        if (event.rect.width < 150) {
-            target.classList.add('tooSmall');
-        } else if (target.classList.contains('tooSmall')) {
-            target.classList.remove('tooSmall');
-        }
+//        if (event.rect.width < 150) {
+//            target.classList.add('tooSmall');
+//        } else if (target.classList.contains('tooSmall')) {
+//            target.classList.remove('tooSmall');
+//        }
 
         // translate when resizing from top or left edges
         x += event.deltaRect.left;
