@@ -43,7 +43,7 @@ function loadBoard() {
         if (element.url == "hex") {
             addColor(element.color, element.x, element.y, i, element.style);
         } else if (element.url == "text") {
-            addText(0, element.x, element.y, i, element.style, element.text, element.size);
+            addText(0, element.x, element.y, i, element.style, element.text, element.size, element.font);
         } else {
             addImage(element.url, element.x, element.y, i, element.style, element.gray);
         }
@@ -104,7 +104,7 @@ interact('.draggable')
         onend: function (event) {
             updateThis(event.target);
         },
-        ignoreFrom: '.text, .controls, input'
+        ignoreFrom: '.text, .controls, input, select, option'
     })
 
     .resizable({
@@ -150,14 +150,13 @@ interact('.draggable')
         target.style.width = event.rect.width + 'px';
         target.style.height = event.rect.height + 'px';
         target.style.maxWidth = undefined;
-    
+
         //Change text size if getting too small
-//        if(event.rect.width < 150){
-//            target.classList.add('tooSmall');
-//        }
-//        else if(target.classList.contains('tooSmall')){
-//            target.classList.remove('tooSmall');
-//        }
+        if (event.rect.width < 150) {
+            target.classList.add('tooSmall');
+        } else if (target.classList.contains('tooSmall')) {
+            target.classList.remove('tooSmall');
+        }
 
         // translate when resizing from top or left edges
         x += event.deltaRect.left;
@@ -175,7 +174,7 @@ interact('.draggable')
         });
     })
     .on('dragstart', function (event) {
-        
+
         // Copy element with alt-drag
         var target = event.target;
         var element = localdata[target.id];
@@ -374,7 +373,7 @@ function changeColor(el) {
     updateThis(div);
 }
 
-function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style = false, text = 0, size = 2) {
+function addText(ev, x = 50, y = 100, id = localdata.length, style = false, text = 0, size = 2, font) {
     if (ev) {
         x = ev.clientX - 60;
         y = ev.clientY - 60;
@@ -433,11 +432,38 @@ function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style =
         div.style.height = null;
         updateThis(div);
     });
-    var label = document.createElement('label');
+    //    var bold = document.createElement('span');
+    //    bold.innerHTML = "B";
+    //    bold.classList.add("controls");
+
+    var changeFont = document.createElement('select');
+
+    changeFont.appendOption = function (option, font = option) {
+        var x = document.createElement('option');
+        x.value = font;
+        x.innerHTML = option;
+        changeFont.append(x);
+    }
+    changeFont.appendOption('Montserrat');
+    changeFont.appendOption('Sans-Serif');
+    changeFont.appendOption('Serif', '"Times New Roman", sans-serif');
+    changeFont.appendOption('Monospace');
+
+    changeFont.addEventListener('input', function () {
+        var value = changeFont.value;
+        div.style.fontFamily = value;
+        localdata[id].font = value;
+        updateThis(div);
+    });
+
+    if (font) {
+        changeFont.value = font;
+    }
 
     addControls(div, false);
     div.append(editableText);
     div.append(slider);
+    div.append(changeFont);
     document.body.append(div);
 
     div.setAttribute("data-x", x);
@@ -454,7 +480,8 @@ function addText(ev = undefined, x = 50, y = 100, id = localdata.length, style =
             zindex: localdata.length,
             id: id,
             text: '',
-            size: size
+            size: size,
+            font: font
         });
         updateData();
     }
@@ -690,8 +717,8 @@ document.getElementById('version').addEventListener('dblclick', function () {
 
 function textMode(ev) {
     ev.stopPropagation();
-        document.body.classList.add('textMode');
-        window.addEventListener('click', addText);
+    document.body.classList.add('textMode');
+    window.addEventListener('click', addText);
 }
 
 window.addEventListener('keydown', function (e) {
