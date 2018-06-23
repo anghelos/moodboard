@@ -4,6 +4,7 @@ var start = true;
 var alerted_storage = false;
 var debugOn = false;
 
+
 //Check to see if the browser supports localstorage
 function storageAvailable(type) {
     try {
@@ -43,7 +44,7 @@ function loadBoard() {
         if (element.url == "hex") {
             addColor(element.color, element.x, element.y, i, element.style);
         } else if (element.url == "text") {
-            addText(0, element.x, element.y, i, element.style, element.text, element.size, element.font);
+            addText(undefined, element.text, element.x, element.y, i, element.style, element.size, element.font);
         } else {
             addImage(element.url, element.x, element.y, i, element.style, element.gray);
         }
@@ -78,6 +79,25 @@ function checkStart() {
         start = false;
         document.getElementById('start_info').classList.add('hidden');
     }
+}
+
+//Welcome board
+function welcomeBoard() {
+    var SW = window.innerWidth;
+    var SH = window.innerHeight;
+
+    function percent(dimension, p) {
+        return Math.floor(dimension * p / 100);
+    }
+
+    addImage('https://source.unsplash.com/' + percent(SW, 30) + 'x' + percent(SH, 70) + '/?water,blue', 50, 80);
+    addImage('https://source.unsplash.com/' + percent(SW, 20) + 'x' + percent(SW, 20) + '/?orange', 80 + percent(SW, 60), 80);
+    addImage('https://source.unsplash.com/' + percent(SW, 20) + 'x' + percent(SW, 20) + '/?orange', 80 + percent(SW, 70), percent(SW, 10), localdata.length, undefined, true);
+    addColor('#1470ba', percent(SW, 30) + 70, percent(SH, 70) - 50);
+    addColor('#ffa500', percent(SW, 30) + 240, percent(SH, 70) - 50, localdata.length, 'width: 300px');
+    addText(undefined, "Here's some text!", 50, (percent(SH, 70) + 50));
+    
+    document.activeElement.blur();
 }
 
 // target elements with the "draggable" class
@@ -152,11 +172,11 @@ interact('.draggable')
         target.style.maxWidth = undefined;
 
         //Change text size if getting too small
-//        if (event.rect.width < 150) {
-//            target.classList.add('tooSmall');
-//        } else if (target.classList.contains('tooSmall')) {
-//            target.classList.remove('tooSmall');
-//        }
+        //        if (event.rect.width < 150) {
+        //            target.classList.add('tooSmall');
+        //        } else if (target.classList.contains('tooSmall')) {
+        //            target.classList.remove('tooSmall');
+        //        }
 
         // translate when resizing from top or left edges
         x += event.deltaRect.left;
@@ -182,7 +202,7 @@ interact('.draggable')
             if (element.url == "hex") {
                 addColor(element.color, element.x, element.y, undefined, element.style);
             } else if (element.url == "text") {
-                addText(0, element.x, element.y, undefined, element.style, element.text, element.size);
+                addText(undefined, element.text, element.x, element.y, undefined, element.style, element.size);
             } else {
                 addImage(element.url, element.x, element.y, undefined, element.style, element.gray);
             }
@@ -283,7 +303,7 @@ function deleteItem(div) {
     }, 1000);
 }
 
-function addImage(src, x = 50, y = 100, id = localdata.length, style = false, gray = false) {
+function addImage(src, x = 50, y = 100, id = localdata.length, style = undefined, gray = false) {
     var div = document.createElement('div');
     var img = document.createElement('img');
 
@@ -315,7 +335,8 @@ function addImage(src, x = 50, y = 100, id = localdata.length, style = false, gr
             x: x,
             y: y,
             zindex: localdata.length,
-            id: id
+            id: id,
+            gray: gray
         });
         updateData();
     }
@@ -373,7 +394,7 @@ function changeColor(el) {
     updateThis(div);
 }
 
-function addText(ev, x = 50, y = 100, id = localdata.length, style = false, text = 0, size = 2, font) {
+function addText(ev, text = '', x = 50, y = 100, id = localdata.length, style = false, size = 2, font) {
     if (ev) {
         x = ev.clientX - 60;
         y = ev.clientY - 60;
@@ -444,7 +465,7 @@ function addText(ev, x = 50, y = 100, id = localdata.length, style = false, text
         x.innerHTML = option;
         changeFont.append(x);
     }
-    changeFont.appendOption('Montserrat');
+    changeFont.appendOption('Default Font', 'Montserrat');
     changeFont.appendOption('Sans-Serif');
     changeFont.appendOption('Serif', '"Times New Roman", sans-serif');
     changeFont.appendOption('Monospace');
@@ -479,7 +500,7 @@ function addText(ev, x = 50, y = 100, id = localdata.length, style = false, text
             y: y,
             zindex: localdata.length,
             id: id,
-            text: '',
+            text: text,
             size: size,
             font: font
         });
@@ -630,7 +651,7 @@ function clear(internal = false) {
         for (var i = 0; i < localdata.length; i++) {
             document.body.removeChild(document.getElementById(localdata[i].id));
         }
-        localdata = {};
+        localdata = [];
         try {
             window.localStorage.removeItem('moodboard');
         } catch (e) {

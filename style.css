@@ -560,6 +560,35 @@ footer {
 #start_info.hidden {
     display: none;
 }
+#welcomeButton{
+    font-size: .8em;
+    pointer-events: all;
+    display: block;
+    padding: .5em;
+    background-color: #969696;
+    color: #fff;
+    font-weight: 600;
+    width: 40%;
+    margin: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-radius: 5px;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    -webkit-transition: all 0.1s ease-out;
+    transition: all 0.1s ease-out;
+}
+
+#welcomeButton:hover {
+    background-color: #ffda76;
+    -webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+}
+#welcomeButton:active{
+    background-color: #969696;
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
 
 .info {
     text-align: center;
