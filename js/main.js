@@ -598,7 +598,7 @@ function drop(ev) {
             var imageUrl = ev.dataTransfer.getData('text/html');
 
             //fix pinterest image size
-            imageUrl = imageUrl.replace(/pinimg.com\/236x/, "pinimg.com/564x")
+            imageUrl = imageUrl.replace(/pinimg.com\/236x/, "pinimg.com/564x").replace(/media\/236x/, "media/originals");
 
             var rex = / src="?([^"\s]+)"?\s*/;
             var url, res;
