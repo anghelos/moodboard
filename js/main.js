@@ -39,6 +39,16 @@ if (storageAvailable('localStorage')) {
 function loadBoard() {
     loading = true;
     localdata = JSON.parse(window.localStorage.getItem('moodboard'));
+
+    //Sort elements according to z-index, and update z-index
+    localdata.sort(function (a, b) {
+        return a.zindex - b.zindex
+    });
+    for (var i = 0; i < localdata.length; i++) {
+        localdata[i].zindex = i;
+    }
+
+
     for (var i = 0; i < localdata.length; i++) {
         var element = localdata[i];
         if (element.url == "hex") {
@@ -96,7 +106,7 @@ function welcomeBoard() {
     addColor('#1470ba', percent(SW, 30) + 70, percent(SH, 70) - 50);
     addColor('#ffa500', percent(SW, 30) + 240, percent(SH, 70) - 50, localdata.length, 'width: 300px');
     addText(undefined, "Here's some text!", 50, (percent(SH, 70) + 50));
-    
+
     document.activeElement.blur();
 }
 
@@ -249,6 +259,7 @@ function addControls(div, bw) {
     });
     up.addEventListener('click', function () {
         div.style.zIndex++;
+        localdata[div.id].zindex++;
         updateThis(div);
     });
     down.addEventListener('click', function () {
@@ -260,6 +271,7 @@ function addControls(div, bw) {
             }
         }
         div.style.zIndex--;
+        localdata[div.id].zindex--;
         updateThis(div);
     });
 
@@ -325,7 +337,7 @@ function addImage(src, x = 50, y = 100, id = localdata.length, style = undefined
     div.setAttribute("data-x", x);
     div.setAttribute("data-y", y);
     div.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
-    div.style.zIndex = localdata.length;
+    div.style.zIndex = id;
 
     if (!loading) {
         div.style.maxWidth = '60%';
@@ -334,7 +346,7 @@ function addImage(src, x = 50, y = 100, id = localdata.length, style = undefined
             url: src,
             x: x,
             y: y,
-            zindex: localdata.length,
+            zindex: id,
             id: id,
             gray: gray
         });
@@ -367,14 +379,14 @@ function addColor(hex, x = 200, y = 100, id = localdata.length, style = false) {
     div.setAttribute("data-y", y);
     div.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
     div.style.backgroundColor = hex;
-    div.style.zIndex = localdata.length;
+    div.style.zIndex = id;
 
     if (!loading) {
         localdata.push({
             url: 'hex',
             x: x,
             y: y,
-            zindex: localdata.length,
+            zindex: id,
             id: id,
             color: hex
         });
@@ -490,7 +502,7 @@ function addText(ev, text = '', x = 50, y = 100, id = localdata.length, style = 
     div.setAttribute("data-x", x);
     div.setAttribute("data-y", y);
     div.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
-    div.style.zIndex = localdata.length;
+    div.style.zIndex = id;
 
     if (!loading) {
         editableText.focus();
@@ -498,7 +510,7 @@ function addText(ev, text = '', x = 50, y = 100, id = localdata.length, style = 
             url: 'text',
             x: x,
             y: y,
-            zindex: localdata.length,
+            zindex: id,
             id: id,
             text: text,
             size: size,
